@@ -58,7 +58,8 @@ c4 = NurbsCurveByPoints([p1, p2]).curve
 sref = NurbsSurfaceByInterp([c1, c2, c3, c4], 1).surface
 lhs_wing.set_sref(sref)
 
-gui = Viewer()
+#gui = Viewer()
 for shape in [fuselage, lhs_wing, rhs_wing]:
-    gui.add(shape)
-gui.start()
+    #gui.add(shape)
+    print(shape)
+#gui.start()
