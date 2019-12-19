@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.Adaptor3d import Adaptor3d_Curve, Adaptor3d_Surface
-from OCCT.BRepAdaptor import (BRepAdaptor_Curve, BRepAdaptor_CompCurve,
+from OCC.Core.Adaptor3d import Adaptor3d_Curve, Adaptor3d_Surface
+from OCC.Core.BRepAdaptor import (BRepAdaptor_Curve, BRepAdaptor_CompCurve,
                               BRepAdaptor_Surface)
-from OCCT.GCPnts import GCPnts_AbscissaPoint
-from OCCT.GeomAdaptor import GeomAdaptor_Curve, GeomAdaptor_Surface
+from OCC.Core.GCPnts import GCPnts_AbscissaPoint
+from OCC.Core.GeomAdaptor import GeomAdaptor_Curve, GeomAdaptor_Surface
 
 __all__ = ["AdaptorBase", "AdaptorCurve", "GeomAdaptorCurve",
            "EdgeAdaptorCurve", "WireAdaptorCurve",
@@ -32,8 +32,8 @@ class AdaptorBase(object):
     Base class for adaptor types.
 
     :param obj: The underlying OpenCASCADE type.
-    :type obj: OCCT.Adaptor3d.Adaptor3d_Curve or
-        OCCT.Adaptor3d.Adaptor3d_Surface
+    :type obj: OCC.Core.Adaptor3d.Adaptor3d_Curve or
+        OCC.Core.Adaptor3d.Adaptor3d_Surface
     """
     # Expected type
     _OCC_TYPE = None
@@ -59,7 +59,7 @@ class AdaptorCurve(AdaptorBase):
     def object(self):
         """
         :return: The underlying OpenCASCADE object.
-        :rtype: OCCT.Adaptor3d.Adaptor3d_Curve
+        :rtype: OCC.Core.Adaptor3d.Adaptor3d_Curve
         """
         return self._object
 
@@ -83,7 +83,7 @@ class AdaptorCurve(AdaptorBase):
     def continuity(self):
         """
         :return: The continuity of the adaptor curve.
-        :rtype: OCCT.GeomAbs.GeomAbs_Shape
+        :rtype: OCC.Core.GeomAbs.GeomAbs_Shape
         """
         return self.object.Continuity()
 
@@ -107,7 +107,7 @@ class AdaptorCurve(AdaptorBase):
     def type(self):
         """
         :return: The type of the adaptor curve.
-        :rtype: OCCT.GeomAbs.GeomAbs_CurveType
+        :rtype: OCC.Core.GeomAbs.GeomAbs_CurveType
         """
         return self.object.GetType()
 
@@ -284,7 +284,7 @@ class AdaptorSurface(AdaptorBase):
     def object(self):
         """
         :return: The underlying OpenCASCADE object.
-        :rtype: OCCT.Adaptor3d.Adaptor3d_Surface
+        :rtype: OCC.Core.Adaptor3d.Adaptor3d_Surface
         """
         return self._object
 
@@ -324,7 +324,7 @@ class AdaptorSurface(AdaptorBase):
     def type(self):
         """
         :return: The type of the adaptor surface.
-        :rtype: OCCT.GeomAbs.GeomAbs_SurfaceType
+        :rtype: OCC.Core.GeomAbs.GeomAbs_SurfaceType
         """
         return self.object.GetType()
 

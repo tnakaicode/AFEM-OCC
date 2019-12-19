@@ -18,27 +18,29 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import sqrt
 
-from OCCT.BRep import BRep_Tool, BRep_Builder
-from OCCT.BRepAdaptor import BRepAdaptor_Curve
-from OCCT.BRepBndLib import BRepBndLib
-from OCCT.BRepBuilderAPI import (BRepBuilderAPI_Copy,
+from OCC.Core.BRep import BRep_Tool, BRep_Builder
+from OCC.Core.BRepAdaptor import BRepAdaptor_Curve
+from OCC.Core.BRepBndLib import brepbndlib
+from OCC.Core.BRepBuilderAPI import (BRepBuilderAPI_Copy,
                                  BRepBuilderAPI_MakeVertex,
                                  BRepBuilderAPI_MakeEdge,
                                  BRepBuilderAPI_MakeWire,
                                  BRepBuilderAPI_MakeFace,
                                  BRepBuilderAPI_MakePolygon)
-from OCCT.BRepClass3d import BRepClass3d
-from OCCT.BRepGProp import BRepGProp
-from OCCT.BRepTools import BRepTools, BRepTools_WireExplorer
-from OCCT.Bnd import Bnd_Box
-from OCCT.GProp import GProp_GProps
-from OCCT.GeomConvert import GeomConvert_CompCurveToBSplineCurve
-from OCCT.ShapeAnalysis import ShapeAnalysis_Edge, ShapeAnalysis_ShapeTolerance
-from OCCT.ShapeFix import ShapeFix_Solid
-from OCCT.TopAbs import TopAbs_ShapeEnum
-from OCCT.TopExp import TopExp
-from OCCT.TopTools import TopTools_IndexedMapOfShape
-from OCCT.TopoDS import (TopoDS, TopoDS_Vertex, TopoDS_Edge, TopoDS_Wire,
+from OCC.Core.BRepClass3d import brepclass3d
+from OCC.Core.BRepGProp import brepgprop_SurfaceProperties, brepgprop_LinearProperties, brepgprop_VolumeProperties
+from OCC.Core.BRepTools import BRepTools_WireExplorer, breptools
+from OCC.Core.Bnd import Bnd_Box
+from OCC.Core.GProp import GProp_GProps
+from OCC.Core.GeomConvert import GeomConvert_CompCurveToBSplineCurve
+from OCC.Core.ShapeAnalysis import ShapeAnalysis_Edge, ShapeAnalysis_ShapeTolerance
+from OCC.Core.ShapeFix import ShapeFix_Solid
+from OCC.Core.TopAbs import TopAbs_SHAPE, TopAbs_VERTEX, TopAbs_EDGE
+from OCC.Core.TopAbs import TopAbs_WIRE, TopAbs_FACE, TopAbs_SHELL, TopAbs_SOLID
+from OCC.Core.TopAbs import TopAbs_COMPSOLID, TopAbs_COMPOUND
+from OCC.Core.TopExp import topexp
+from OCC.Core.TopTools import TopTools_IndexedMapOfShape
+from OCC.Core.TopoDS import (topods, TopoDS_Vertex, TopoDS_Edge, TopoDS_Wire,
                          TopoDS_Face, TopoDS_Shell, TopoDS_Solid,
                          TopoDS_Compound, TopoDS_CompSolid, TopoDS_Shape,
                          TopoDS_Iterator)
@@ -56,31 +58,31 @@ class Shape(ViewableItem):
     """
     Shape.
 
-    :param OCCT.TopoDS.TopoDS_Shape shape: The underlying shape.
+    :param OCC.Core.TopoDS.TopoDS_Shape shape: The underlying shape.
 
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_SHAPE SHAPE: Shape type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_VERTEX VERTEX: Vertex type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_EDGE EDGE: Edge type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_WIRE WIRE: Wire type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_FACE FACE: Face type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_SHELL SHELL: Shell type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_SOLID SOLID: Solid type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_COMPSOLID COMPSOLID: CompSolid
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_SHAPE SHAPE: Shape type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_VERTEX VERTEX: Vertex type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_EDGE EDGE: Edge type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_WIRE WIRE: Wire type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_FACE FACE: Face type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_SHELL SHELL: Shell type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_SOLID SOLID: Solid type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_COMPSOLID COMPSOLID: CompSolid
         type.
-    :cvar OCCT.TopAbs.TopAbs_ShapeEnum.TopAbs_COMPOUND COMPOUND: Compound type.
+    :cvar OCC.Core.TopAbs.TopAbs_ShapeEnum.TopAbs_COMPOUND COMPOUND: Compound type.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Shape``.
     """
 
-    SHAPE = TopAbs_ShapeEnum.TopAbs_SHAPE
-    VERTEX = TopAbs_ShapeEnum.TopAbs_VERTEX
-    EDGE = TopAbs_ShapeEnum.TopAbs_EDGE
-    WIRE = TopAbs_ShapeEnum.TopAbs_WIRE
-    FACE = TopAbs_ShapeEnum.TopAbs_FACE
-    SHELL = TopAbs_ShapeEnum.TopAbs_SHELL
-    SOLID = TopAbs_ShapeEnum.TopAbs_SOLID
-    COMPSOLID = TopAbs_ShapeEnum.TopAbs_COMPSOLID
-    COMPOUND = TopAbs_ShapeEnum.TopAbs_COMPOUND
+    SHAPE = TopAbs_SHAPE
+    VERTEX = TopAbs_VERTEX
+    EDGE = TopAbs_EDGE
+    WIRE = TopAbs_WIRE
+    FACE = TopAbs_FACE
+    SHELL = TopAbs_SHELL
+    SOLID = TopAbs_SOLID
+    COMPSOLID = TopAbs_COMPSOLID
+    COMPOUND = TopAbs_COMPOUND
 
     def __init__(self, shape):
         if not isinstance(shape, TopoDS_Shape):
@@ -108,7 +110,7 @@ class Shape(ViewableItem):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Shape
+        :rtype: OCC.Core.TopoDS.TopoDS_Shape
         """
         return self.object
 
@@ -116,7 +118,7 @@ class Shape(ViewableItem):
     def object(self):
         """
         :return: The underlying shape.
-        :rtype: OCCT.TopoDS.TopoDS_Shape
+        :rtype: OCC.Core.TopoDS.TopoDS_Shape
         """
         return self._shape
 
@@ -141,7 +143,7 @@ class Shape(ViewableItem):
     def shape_type(self):
         """
         :return: The shape type.
-        :rtype: OCCT.TopAbs.TopAbs_ShapeEnum
+        :rtype: OCC.Core.TopAbs.TopAbs_ShapeEnum
         """
         return self.object.ShapeType()
 
@@ -296,7 +298,7 @@ class Shape(ViewableItem):
         :rtype: int
         """
         map_ = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.VERTEX, map_)
+        topexp.MapShapes(self.object, Shape.VERTEX, map_)
         return map_.Extent()
 
     @property
@@ -306,7 +308,7 @@ class Shape(ViewableItem):
         :rtype: int
         """
         map_ = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.EDGE, map_)
+        topexp.MapShapes(self.object, Shape.EDGE, map_)
         return map_.Extent()
 
     @property
@@ -316,7 +318,7 @@ class Shape(ViewableItem):
         :rtype: int
         """
         map_ = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.FACE, map_)
+        topexp.MapShapes(self.object, Shape.FACE, map_)
         return map_.Extent()
 
     @property
@@ -367,7 +369,7 @@ class Shape(ViewableItem):
         :rtype: float
         """
         props = GProp_GProps()
-        BRepGProp.LinearProperties_(self.object, props, True)
+        brepgprop_LinearProperties(self.object, props, True)
         return props.Mass()
 
     @property
@@ -377,7 +379,7 @@ class Shape(ViewableItem):
         :rtype: float
         """
         props = GProp_GProps()
-        BRepGProp.SurfaceProperties_(self.object, props, True)
+        brepgprop_SurfaceProperties(self.object, props, True)
         return props.Mass()
 
     @property
@@ -387,7 +389,7 @@ class Shape(ViewableItem):
         :rtype: float
         """
         props = GProp_GProps()
-        BRepGProp.VolumeProperties_(self.object, props, True)
+        brepgprop_VolumeProperties(self.object, props, True)
         return props.Mass()
 
     @property
@@ -419,7 +421,7 @@ class Shape(ViewableItem):
         Get sub-shapes of a specified type from the shape.
         """
         map_ = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, type_, map_)
+        topexp.MapShapes(self.object, type_, map_)
         shapes = []
         for i in range(1, map_.Size() + 1):
             shapes.append(Shape.wrap(map_.FindKey(i)))
@@ -510,12 +512,12 @@ class Shape(ViewableItem):
             afem.topology.entities.Compound
         """
         this_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.VERTEX, this_map)
+        topexp.MapShapes(self.object, Shape.VERTEX, this_map)
         if this_map.Extent() == 0:
             return []
 
         other_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(other.object, Shape.VERTEX, other_map)
+        topexp.MapShapes(other.object, Shape.VERTEX, other_map)
         if other_map.Extent() == 0:
             return []
 
@@ -542,12 +544,12 @@ class Shape(ViewableItem):
             afem.topology.entities.Compound
         """
         this_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.EDGE, this_map)
+        topexp.MapShapes(self.object, Shape.EDGE, this_map)
         if this_map.Extent() == 0:
             return []
 
         other_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(other.object, Shape.EDGE, other_map)
+        topexp.MapShapes(other.object, Shape.EDGE, other_map)
         if other_map.Extent() == 0:
             return []
 
@@ -574,12 +576,12 @@ class Shape(ViewableItem):
             afem.topology.entities.Compound
         """
         this_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(self.object, Shape.FACE, this_map)
+        topexp.MapShapes(self.object, Shape.FACE, this_map)
         if this_map.Extent() == 0:
             return []
 
         other_map = TopTools_IndexedMapOfShape()
-        TopExp.MapShapes_(other.object, Shape.FACE, other_map)
+        topexp.MapShapes(other.object, Shape.FACE, other_map)
         if other_map.Extent() == 0:
             return []
 
@@ -598,7 +600,7 @@ class Shape(ViewableItem):
         """
         Wrap the OpenCASCADE shape based on its type.
 
-        :param OCCT.TopoDS.TopoDS_Shape shape: The shape.
+        :param OCC.Core.TopoDS.TopoDS_Shape shape: The shape.
 
         :return: The wrapped shape.
         :rtype: afem.topology.entities.Shape or afem.topology.entities.Vertex
@@ -671,7 +673,7 @@ class Shape(ViewableItem):
         """
         Create a Python list of shapes from a TopoDS_ListOfShape.
 
-        :param OCCT.TopoDS.TopoDS_ListOfShape topods_list: The list.
+        :param OCC.Core.TopoDS.TopoDS_ListOfShape topods_list: The list.
 
         :return: The list of shapes.
         :rtype: list(afem.topology.entities.Shape)
@@ -683,7 +685,7 @@ class Vertex(Shape):
     """
     Vertex.
 
-    :param OCCT.TopoDS.TopoDS_Vertex shape: The vertex.
+    :param OCC.Core.TopoDS.TopoDS_Vertex shape: The vertex.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Vertex``.
     """
@@ -693,7 +695,7 @@ class Vertex(Shape):
             if not shape.ShapeType() == Shape.VERTEX:
                 raise TypeError('Shape is not a TopoDS_Vertex.')
             if not isinstance(shape, TopoDS_Vertex):
-                shape = TopoDS.Vertex_(shape)
+                shape = topods.Vertex(shape)
         super(Vertex, self).__init__(shape)
 
     @property
@@ -726,7 +728,7 @@ class Edge(Shape):
     """
     Edge.
 
-    :param OCCT.TopoDS.TopoDS_Edge shape: The edge.
+    :param OCC.Core.TopoDS.TopoDS_Edge shape: The edge.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Edge``.
     """
@@ -736,7 +738,7 @@ class Edge(Shape):
             if not shape.ShapeType() == Shape.EDGE:
                 raise TypeError('Shape is not a TopoDS_Edge.')
             if not isinstance(shape, TopoDS_Edge):
-                shape = TopoDS.Edge_(shape)
+                shape = topods.Edge(shape)
         super(Edge, self).__init__(shape)
 
     @property
@@ -797,7 +799,7 @@ class Wire(Shape):
     """
     Wire.
 
-    :param OCCT.TopoDS.TopoDS_Wire shape: The wire.
+    :param OCC.Core.TopoDS.TopoDS_Wire shape: The wire.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Wire``.
     """
@@ -807,7 +809,7 @@ class Wire(Shape):
             if not shape.ShapeType() == Shape.WIRE:
                 raise TypeError('Shape is not a TopoDS_Wire.')
             if not isinstance(shape, TopoDS_Wire):
-                shape = TopoDS.Wire_(shape)
+                shape = topods.Wire(shape)
         super(Wire, self).__init__(shape)
 
     @property
@@ -877,7 +879,7 @@ class Face(Shape):
     """
     Face.
 
-    :param OCCT.TopoDS.TopoDS_Face shape: The face.
+    :param OCC.Core.TopoDS.TopoDS_Face shape: The face.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Face``.
     """
@@ -905,7 +907,7 @@ class Face(Shape):
         :return: The outer wire of the face.
         :rtype: afem.topology.entities.Wire
         """
-        return Wire(BRepTools.OuterWire_(self.object))
+        return Wire(breptools.OuterWire(self.object))
 
     def to_shell(self):
         """
@@ -949,7 +951,7 @@ class Shell(Shape):
     """
     Shell.
 
-    :param OCCT.TopoDS.TopoDS_Shell shape: The shell.
+    :param OCC.Core.TopoDS.TopoDS_Shell shape: The shell.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Shell``.
     """
@@ -959,7 +961,7 @@ class Shell(Shape):
             if not shape.ShapeType() == Shape.SHELL:
                 raise TypeError('Shape is not a TopoDS_Shell.')
             if not isinstance(shape, TopoDS_Shell):
-                shape = TopoDS.Shell_(shape)
+                shape = topods.Shell(shape)
         super(Shell, self).__init__(shape)
 
     @property
@@ -1015,7 +1017,7 @@ class Solid(Shape):
     """
     Solid.
 
-    :param OCCT.TopoDS.TopoDS_Solid shape: The solid.
+    :param OCC.Core.TopoDS.TopoDS_Solid shape: The solid.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Solid``.
     """
@@ -1025,7 +1027,7 @@ class Solid(Shape):
             if not shape.ShapeType() == Shape.SOLID:
                 raise TypeError('Shape is not a TopoDS_Solid.')
             if not isinstance(shape, TopoDS_Solid):
-                shape = TopoDS.Solid_(shape)
+                shape = topods.Solid(shape)
         super(Solid, self).__init__(shape)
 
     @property
@@ -1034,7 +1036,7 @@ class Solid(Shape):
         :return: The outer shell of the face.
         :rtype: afem.topology.entities.Shell
         """
-        return Shell(BRepClass3d.OuterShell_(self.object))
+        return Shell(brepclass3d.OuterShell(self.object))
 
     @staticmethod
     def by_shell(shell):
@@ -1053,7 +1055,7 @@ class CompSolid(Shape):
     """
     CompSolid.
 
-    :param OCCT.TopoDS.TopoDS_CompSolid shape: The compsolid.
+    :param OCC.Core.TopoDS.TopoDS_CompSolid shape: The compsolid.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_CompSolid``.
     """
@@ -1063,7 +1065,7 @@ class CompSolid(Shape):
             if not shape.ShapeType() == Shape.COMPSOLID:
                 raise TypeError('Shape is not a TopoDS_CompSolid.')
             if not isinstance(shape, TopoDS_CompSolid):
-                shape = TopoDS.CompSolid_(shape)
+                shape = topods.CompSolid(shape)
         super(CompSolid, self).__init__(shape)
 
 
@@ -1071,7 +1073,7 @@ class Compound(Shape):
     """
     Compound.
 
-    :param OCCT.TopoDS.TopoDS_Compound shape: The compound.
+    :param OCC.Core.TopoDS.TopoDS_Compound shape: The compound.
 
     :raise TypeError: If ``shape`` is not a ``TopoDS_Compound``.
     """
@@ -1300,7 +1302,7 @@ class BBox(Bnd_Box):
 
         :return: None.
         """
-        BRepBndLib.Add_(shape.object, self, True)
+        brepbndlib.Add(shape.object, self, True)
 
     def is_pnt_out(self, pnt):
         """

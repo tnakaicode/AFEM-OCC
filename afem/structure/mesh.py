@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from afem.exchange import nastran
-from afem.smesh.entities import MeshGen, MeshGroup, Mesh
+#from afem.smesh.entities import MeshGen, MeshGroup, Mesh
 from afem.smesh.hypotheses import (Regular1D, NetgenAlgo2D,
                                    NetgenSimple2D, LocalLength1D,
                                    NumberOfSegments1D, MaxLength1D,
@@ -40,6 +40,7 @@ class MeshVehicle(object):
     """
 
     def __init__(self, target_size=1., allow_quads=True):
+        from afem.smesh.entities import MeshGen, MeshGroup, Mesh
         group = GroupAPI.get_master()
         self._shape = group.get_shape()
         self._gen = MeshGen()
@@ -91,7 +92,7 @@ class MeshVehicle(object):
         :type shape: afem.topology.entities.Shape
 
         :return: Status of adding hypothesis.
-        :rtype: OCCT.SMESH.SMESH_Hypothesis.Hypothesis_Status
+        :rtype: OCC.Core.SMESH.SMESH_Hypothesis.Hypothesis_Status
         """
         if shape is None:
             shape = self.shape
@@ -195,6 +196,7 @@ class MeshVehicle(object):
         :return: The node group.
         :rtype: afem.smesh.entities.MeshGroup
         """
+        from afem.smesh.entities import MeshGen, MeshGroup, Mesh
         return MeshGroup(self.mesh, name, Mesh.NODE, shape)
 
     def create_edge_group(self, shape, name='edge_group'):
@@ -207,6 +209,7 @@ class MeshVehicle(object):
         :return: The edge group.
         :rtype: afem.smesh.entities.MeshGroup
         """
+        from afem.smesh.entities import MeshGen, MeshGroup, Mesh
         return MeshGroup(self.mesh, name, Mesh.EDGE, shape)
 
     def create_face_group(self, shape, name='node_group'):
@@ -219,6 +222,7 @@ class MeshVehicle(object):
         :return: The face group.
         :rtype: afem.smesh.entities.MeshGroup
         """
+        from afem.smesh.entities import MeshGen, MeshGroup, Mesh
         return MeshGroup(self.mesh, name, Mesh.FACE, shape)
 
     def export_nastran(self, fn):

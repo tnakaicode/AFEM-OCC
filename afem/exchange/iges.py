@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.IFSelect import IFSelect_RetDone
-from OCCT.IGESControl import IGESControl_Reader, IGESControl_Writer
-from OCCT.Interface import Interface_Static
+from OCC.Core.IFSelect import IFSelect_RetDone
+from OCC.Core.IGESControl import IGESControl_Reader, IGESControl_Writer
+from OCC.Core.Interface import Interface_Static
 
 from afem.config import Settings, units_dict
 from afem.topology.entities import Shape
@@ -43,13 +43,13 @@ class IgesWrite(object):
             units = units_dict[units]
         except KeyError:
             units = Settings.units
-        Interface_Static.SetCVal_('write.step.unit', units)
+        Interface_Static.SetCVal('write.step.unit', units)
 
     @property
     def object(self):
         """
         :return: The IGES writer object.
-        :rtype: OCCT.IGESControl.IGESControl_Writer
+        :rtype: OCC.Core.IGESControl.IGESControl_Writer
         """
         return self._writer
 
@@ -68,7 +68,7 @@ class IgesWrite(object):
         """
         Add the geometry to the exported entities.
 
-        :param OCCT.Geom.Geom_Geometry geom: The geometry.
+        :param OCC.Core.Geom.Geom_Geometry geom: The geometry.
 
         :return: *True* if shape was transferred, *False* if not.
         :rtype: bool
@@ -107,7 +107,7 @@ class IgesRead(object):
             raise RuntimeError("Error reading IGES file.")
 
         # Convert to desired units
-        Interface_Static.SetCVal_("xstep.cascade.unit", Settings.units)
+        Interface_Static.SetCVal("xstep.cascade.unit", Settings.units)
 
         # Transfer
         nroots = self._reader.TransferRoots()
@@ -118,7 +118,7 @@ class IgesRead(object):
     def object(self):
         """
         :return: The IGES reader object.
-        :rtype: OCCT.IGESControl.IGESControl_Reader
+        :rtype: OCC.Core.IGESControl.IGESControl_Reader
         """
         return self._reader
 

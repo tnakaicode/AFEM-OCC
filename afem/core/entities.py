@@ -105,7 +105,7 @@ class ShapeHolder(NamedItem, ViewableItem):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Shape
+        :rtype: OCC.Core.TopoDS.TopoDS_Shape
         """
         return self.shape.object
 

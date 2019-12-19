@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BRepBuilderAPI import BRepBuilderAPI_Sewing
-from OCCT.BRepTools import BRepTools_Modifier
-from OCCT.ShapeBuild import ShapeBuild_ReShape
-from OCCT.ShapeCustom import ShapeCustom_BSplineRestriction
-from OCCT.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
+from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Sewing
+from OCC.Core.BRepTools import BRepTools_Modifier
+from OCC.Core.ShapeBuild import ShapeBuild_ReShape
+from OCC.Core.ShapeCustom import shapecustom_BSplineRestriction
+from OCC.Core.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
                                ShapeUpgrade_ShapeDivideContinuity,
-                               ShapeUpgrade_UnifySameDomain)
-from OCCT.TopTools import (TopTools_DataMapOfShapeShape,
+                               shapeupgrade,
+                               ShapeUpgrade_Tool)
+from OCC.Core.TopTools import (TopTools_DataMapOfShapeShape,
                            TopTools_IndexedMapOfShape)
 
 from afem.geometry.entities import Geometry
@@ -62,7 +63,7 @@ class DivideContinuityShape(object):
 
     :param afem.topology.entities.Shape shape: The shape.
     :param float tol: The tolerance.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: The continuity to divide.
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: The continuity to divide.
     """
 
     def __init__(self, shape, tol=0.001, continuity=Geometry.C1):
@@ -107,6 +108,7 @@ class UnifyShape(object):
     """
 
     def __init__(self, shape, edges=True, faces=True, bsplines=False):
+        from OCC.Core.ShapeUpgrade import ShapeUpgrade_UnifySameDomain
         tool = ShapeUpgrade_UnifySameDomain(shape.object, edges, faces,
                                             bsplines)
         tool.Build()
@@ -527,9 +529,9 @@ class ShapeBSplineRestriction(object):
         expense of *dmax*.
     :param bool rational: If *True*, the approximation for rational B-Spline
         and Bezier are converted to polynomial.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity3d: Desired continuity for 3-d
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity3d: Desired continuity for 3-d
         curve and surface approximation.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity2d: Desired continuity for 2-d
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity2d: Desired continuity for 2-d
         curve and surface approximation.
     """
 
@@ -537,7 +539,7 @@ class ShapeBSplineRestriction(object):
                  approx_crv3d=True, approx_crv2d=True, tol3d=0.01,
                  tol2d=1.0e-6, dmax=9, nmax=10000, degree=True, rational=False,
                  continuity3d=Geometry.C1, continuity2d=Geometry.C2):
-        self._the_mod = ShapeCustom_BSplineRestriction(approx_srf,
+        self._the_mod = shapecustom_BSplineRestriction(approx_srf,
                                                        approx_crv3d,
                                                        approx_crv2d, tol3d,
                                                        tol2d, continuity3d,
